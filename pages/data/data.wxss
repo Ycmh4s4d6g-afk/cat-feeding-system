@@ -1,0 +1,96 @@
+.date-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx;
+  font-size: 30rpx;
+}
+
+.date-card picker {
+  color: #1f8a70;
+  font-weight: 800;
+}
+
+.chart {
+  padding: 26rpx;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 94rpx 1fr 76rpx;
+  align-items: center;
+  gap: 14rpx;
+  margin-bottom: 22rpx;
+}
+
+.chart-time {
+  color: #766d63;
+  font-size: 23rpx;
+}
+
+.bar-wrap {
+  height: 24rpx;
+  border-radius: 12rpx;
+  background: #eadfd4;
+  overflow: hidden;
+}
+
+.temp-bar,
+.food-bar {
+  height: 100%;
+  border-radius: 12rpx;
+}
+
+.temp-bar {
+  background: #cf5c36;
+}
+
+.food-bar {
+  background: #1f8a70;
+}
+
+.chart-value {
+  text-align: right;
+  font-size: 23rpx;
+  font-weight: 700;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  color: #766d63;
+  font-size: 24rpx;
+}
+
+.temp-dot,
+.food-dot {
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 9rpx;
+}
+
+.temp-dot {
+  background: #cf5c36;
+}
+
+.food-dot {
+  background: #1f8a70;
+}
+
+.records {
+  padding: 10rpx 26rpx;
+}
+
+.record {
+  display: flex;
+  justify-content: space-between;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid #eadfd4;
+  color: #4b4037;
+  font-size: 25rpx;
+}
+
+.record:last-child {
+  border-bottom: 0;
+}

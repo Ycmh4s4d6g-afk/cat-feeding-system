@@ -1,0 +1,122 @@
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx;
+}
+
+.summary-label,
+.summary-rule {
+  color: #766d63;
+  font-size: 25rpx;
+}
+
+.summary-value {
+  margin-top: 8rpx;
+  color: #1f8a70;
+  font-size: 48rpx;
+  font-weight: 800;
+}
+
+.portion-panel {
+  padding: 28rpx;
+}
+
+.portion-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32rpx;
+}
+
+.stepper {
+  width: 92rpx;
+  height: 92rpx;
+  border-radius: 46rpx;
+  background: #eadbcb;
+  color: #4b4037;
+  font-size: 40rpx;
+  line-height: 92rpx;
+}
+
+.portion-count {
+  min-width: 180rpx;
+  text-align: center;
+  font-size: 64rpx;
+  font-weight: 800;
+}
+
+.unit {
+  margin-left: 8rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.feed-button {
+  margin-top: 28rpx;
+}
+
+.form {
+  padding: 28rpx;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 84rpx;
+  border-bottom: 1rpx solid #eadfd4;
+  font-size: 30rpx;
+}
+
+.picker-value {
+  color: #1f8a70;
+  font-weight: 800;
+}
+
+.small-stepper {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+.small-stepper button {
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: 29rpx;
+  background: #eadbcb;
+  line-height: 58rpx;
+}
+
+.small-stepper text {
+  min-width: 42rpx;
+  text-align: center;
+  font-weight: 800;
+}
+
+.form .ghost-button {
+  margin-top: 24rpx;
+}
+
+.schedule-list {
+  margin-top: 22rpx;
+}
+
+.schedule {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18rpx;
+  padding: 24rpx 28rpx;
+}
+
+.schedule-time {
+  font-size: 34rpx;
+  font-weight: 800;
+}
+
+.schedule-desc {
+  margin-top: 6rpx;
+  color: #766d63;
+  font-size: 24rpx;
+}

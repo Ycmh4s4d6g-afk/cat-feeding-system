@@ -1,0 +1,51 @@
+<view class="page">
+  <view class="summary card">
+    <view>
+      <view class="summary-label">当前余量</view>
+      <view class="summary-value">{{status.foodWeight}}g</view>
+    </view>
+    <view class="summary-rule">低于 {{status.lowFoodThreshold}}g 自动提醒</view>
+  </view>
+
+  <view class="section-title">手动喂食</view>
+  <view class="portion-panel card">
+    <view class="portion-row">
+      <button class="stepper" bindtap="minusPortion">-</button>
+      <view class="portion-count">
+        <text>{{manualPortions}}</text>
+        <text class="unit">份</text>
+      </view>
+      <button class="stepper" bindtap="plusPortion">+</button>
+    </view>
+    <button class="primary-button feed-button" bindtap="sendManualFeed">发送喂食指令</button>
+  </view>
+
+  <view class="section-title">定时计划</view>
+  <view class="form card">
+    <view class="form-row">
+      <text>时间</text>
+      <picker mode="time" value="{{newTime}}" bindchange="onTimeChange">
+        <view class="picker-value">{{newTime}}</view>
+      </picker>
+    </view>
+    <view class="form-row">
+      <text>份数</text>
+      <view class="small-stepper">
+        <button bindtap="minusSchedulePortion">-</button>
+        <text>{{newPortions}}</text>
+        <button bindtap="plusSchedulePortion">+</button>
+      </view>
+    </view>
+    <button class="ghost-button" bindtap="addSchedule">添加计划</button>
+  </view>
+
+  <view class="schedule-list">
+    <view class="schedule card" wx:for="{{schedules}}" wx:key="id">
+      <view>
+        <view class="schedule-time">{{item.time}}</view>
+        <view class="schedule-desc">出粮 {{item.portions}} 份 · 防重复执行已开启</view>
+      </view>
+      <switch checked="{{item.enabled}}" data-id="{{item.id}}" bindchange="toggleSchedule" />
+    </view>
+  </view>
+</view>

@@ -1,0 +1,52 @@
+<view class="page home-page">
+  <view class="hero">
+    <view>
+      <view class="eyebrow">SMART PET FEEDER</view>
+      <view class="title">自动化喂养 · 智能交互</view>
+      <view class="subtitle">设备 {{status.deviceOnline ? '在线' : '离线'}} · 最近喂食 {{status.lastFeedTime}}</view>
+    </view>
+    <view class="cat-face">
+      <view class="ear left"></view>
+      <view class="ear right"></view>
+      <view class="eyes">● ●</view>
+      <view class="mouth">ω</view>
+    </view>
+  </view>
+
+  <view class="quick-grid">
+    <view class="metric card">
+      <text class="metric-label">温度</text>
+      <text class="metric-value">{{status.temperature}}℃</text>
+    </view>
+    <view class="metric card">
+      <text class="metric-label">湿度</text>
+      <text class="metric-value">{{status.humidity}}%</text>
+    </view>
+    <view class="metric card {{status.foodWeight <= status.lowFoodThreshold ? 'warning' : ''}}">
+      <text class="metric-label">余量</text>
+      <text class="metric-value">{{status.foodWeight}}g</text>
+    </view>
+  </view>
+
+  <view class="notice card" wx:if="{{status.foodWeight <= status.lowFoodThreshold}}">
+    <view class="notice-title">猫粮余量不足</view>
+    <view class="notice-text">已低于 {{status.lowFoodThreshold}}g，请补充猫粮。系统会暂停自动出粮，避免空转。</view>
+  </view>
+
+  <view class="section-title">常用操作</view>
+  <view class="actions">
+    <button class="primary-button" bindtap="feedNow">立即喂食</button>
+    <button class="ghost-button" bindtap="goCamera">远程拍照</button>
+  </view>
+
+  <view class="section-title">今日计划</view>
+  <view class="schedule-list">
+    <view class="schedule card" wx:for="{{schedules}}" wx:key="id">
+      <view>
+        <view class="schedule-time">{{item.time}}</view>
+        <view class="schedule-desc">{{item.portions}} 份 · {{item.enabled ? '已启用' : '已暂停'}}</view>
+      </view>
+      <switch checked="{{item.enabled}}" disabled />
+    </view>
+  </view>
+</view>

@@ -1,0 +1,40 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/feed/feed",
+    "pages/data/data",
+    "pages/camera/camera"
+  ],
+  "window": {
+    "navigationBarTitleText": "智能猫咪喂食机",
+    "navigationBarBackgroundColor": "#f7efe7",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f7efe7"
+  },
+  "tabBar": {
+    "color": "#766d63",
+    "selectedColor": "#1f8a70",
+    "backgroundColor": "#fffaf4",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/feed/feed",
+        "text": "喂食"
+      },
+      {
+        "pagePath": "pages/data/data",
+        "text": "数据"
+      },
+      {
+        "pagePath": "pages/camera/camera",
+        "text": "抓拍"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
