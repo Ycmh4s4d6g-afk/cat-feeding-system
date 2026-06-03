@@ -33,6 +33,12 @@ function request(options = {}) {
       header,
       timeout: options.timeout || config.timeout,
       success(res) {
+        console.log("request response:", {
+          url: joinUrl(options.baseUrl || config.baseUrl, options.url || ""),
+          statusCode: res.statusCode,
+          data: res.data
+        });
+
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data);
           return;
@@ -45,6 +51,10 @@ function request(options = {}) {
         });
       },
       fail(err) {
+        console.error("request fail:", {
+          url: joinUrl(options.baseUrl || config.baseUrl, options.url || ""),
+          err
+        });
         reject(err);
       }
     });
