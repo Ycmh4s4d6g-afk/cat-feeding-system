@@ -5,12 +5,6 @@
       <view class="title">自动化喂养 · 智能交互</view>
       <view class="subtitle">设备 {{status.deviceOnline ? '在线' : '离线'}} · 最近喂食 {{status.lastFeedTime}}</view>
     </view>
-    <view class="cat-face">
-      <view class="ear left"></view>
-      <view class="ear right"></view>
-      <view class="eyes">● ●</view>
-      <view class="mouth">ω</view>
-    </view>
   </view>
 
   <view class="quick-grid">

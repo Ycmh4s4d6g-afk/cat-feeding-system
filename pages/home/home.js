@@ -1,4 +1,5 @@
 const { getDeviceSnapshot } = require("../../utils/mock-device");
+const { get } = require("../../utils/request.js");
 
 Page({
   data: {
@@ -9,6 +10,17 @@ Page({
   onLoad() {
     const { status, schedules } = getDeviceSnapshot();
     this.setData({ status, schedules });
+    this.loadTestData();
+  },
+
+  loadTestData() {
+    get("http://10.100.153.147:5000/api/data")
+      .then((data) => {
+        console.log("api/data success:", data);
+      })
+      .catch((err) => {
+        console.error("api/data failed:", err);
+      });
   },
 
   feedNow() {
