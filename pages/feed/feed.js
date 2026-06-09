@@ -1,4 +1,12 @@
 const { getDeviceSnapshot } = require("../../utils/mock-device");
+const {
+  PORTION_SECONDS,
+  getDeviceStatus,
+  getFeedSchedules,
+  manualFeed,
+  normalizeSchedule,
+  normalizeStatus
+} = require("../../utils/api.js");
 
 Page({
   data: {
@@ -12,6 +20,38 @@ Page({
   onLoad() {
     const { status, schedules } = getDeviceSnapshot();
     this.setData({ status, schedules: schedules.map((item) => ({ ...item })) });
+    this.loadFeedData();
+  },
+
+  onShow() {
+    this.loadFeedData();
+  },
+
+  loadFeedData() {
+    const fallbackStatus = this.data.status;
+
+    Promise.all([
+      getDeviceStatus().catch((err) => {
+        console.error("device status failed:", err);
+        return null;
+      }),
+      getFeedSchedules().catch((err) => {
+        console.error("feed schedules failed:", err);
+        return null;
+      })
+    ]).then(([statusData, schedulesData]) => {
+      const nextData = {};
+
+      if (statusData) {
+        nextData.status = normalizeStatus(statusData, fallbackStatus);
+      }
+
+      if (Array.isArray(schedulesData)) {
+        nextData.schedules = schedulesData.map(normalizeSchedule);
+      }
+
+      this.setData(nextData);
+    });
   },
 
   minusPortion() {
@@ -35,10 +75,20 @@ Page({
   },
 
   sendManualFeed() {
-    wx.showToast({
-      title: `${this.data.manualPortions}份指令已发送`,
-      icon: "success"
-    });
+    const duration = this.data.manualPortions * PORTION_SECONDS;
+
+    manualFeed(duration)
+      .then(() => {
+        wx.showToast({
+          title: "已发送",
+          icon: "success"
+        });
+        this.loadFeedData();
+      })
+      .catch((err) => {
+        console.error("manual feed failed:", err);
+        wx.showToast({ title: "发送失败", icon: "none" });
+      });
   },
 
   addSchedule() {
@@ -46,6 +96,7 @@ Page({
       id: Date.now(),
       time: this.data.newTime,
       portions: this.data.newPortions,
+      durationSeconds: this.data.newPortions * PORTION_SECONDS,
       enabled: true
     };
     this.setData({ schedules: [...this.data.schedules, next] });

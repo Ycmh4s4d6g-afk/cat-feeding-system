@@ -1,7 +1,8 @@
 const DEFAULT_TIMEOUT = 30000;
+const BASE_URL = "http://10.100.153.147:5000";
 
 const config = {
-  baseUrl: "",
+  baseUrl: BASE_URL,
   timeout: DEFAULT_TIMEOUT,
   header: {}
 };
@@ -138,6 +139,7 @@ function uploadFile(options = {}) {
 }
 
 module.exports = {
+  BASE_URL,
   setRequestConfig,
   request,
   get,
