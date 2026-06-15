@@ -28,7 +28,7 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 92rpx;
+  height: 78rpx;
   border-radius: 46rpx;
   background: #1f8a70;
   color: #ffffff;

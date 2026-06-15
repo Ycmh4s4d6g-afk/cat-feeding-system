@@ -1,16 +1,24 @@
 <view class="page home-page">
   <view class="hero">
-    <view>
-      <view class="eyebrow">SMART PET FEEDER</view>
+    <view class="hero-copy">
       <view class="title">自动化喂养 · 智能交互</view>
-      <view class="subtitle">设备 {{status.deviceOnline ? '在线' : '离线'}} · 最近喂食 {{status.lastFeedTime}}</view>
+      <view class="subtitle">设备 {{status.deviceOnline ? '在线' : '离线'}} · 最近更新 {{status.lastFeedTime}}</view>
     </view>
+    <button
+      class="feeder-toggle {{feederEnabled ? 'on' : ''}}"
+      loading="{{feederSwitching}}"
+      disabled="{{feederSwitching}}"
+      bindtap="toggleFeeder"
+    >
+      <text class="toggle-label">喂食器</text>
+      <text class="toggle-state">{{feederEnabled ? '关闭' : '打开'}}</text>
+    </button>
   </view>
 
   <view class="quick-grid">
     <view class="metric card">
       <text class="metric-label">温度</text>
-      <text class="metric-value">{{status.temperature}}℃</text>
+      <text class="metric-value">{{status.temperature}}°C</text>
     </view>
     <view class="metric card">
       <text class="metric-label">湿度</text>
@@ -22,25 +30,59 @@
     </view>
   </view>
 
-  <view class="notice card" wx:if="{{status.foodWeight <= status.lowFoodThreshold}}">
-    <view class="notice-title">猫粮余量不足</view>
-    <view class="notice-text">已低于 {{status.lowFoodThreshold}}g，请补充猫粮。系统会暂停自动出粮，避免空转。</view>
+  <view class="notice card" wx:if="{{alert}}">
+    <view class="notice-title">{{alert.title}}</view>
+    <view class="notice-text">{{alert.message}}</view>
+    <view class="notice-time" wx:if="{{alert.time}}">{{alert.time}}</view>
   </view>
 
-  <view class="section-title">常用操作</view>
-  <view class="actions">
-    <button class="primary-button" bindtap="feedNow">立即喂食</button>
-    <button class="ghost-button" bindtap="goCamera">远程拍照</button>
-  </view>
-
-  <view class="section-title">今日计划</view>
-  <view class="schedule-list">
-    <view class="schedule card" wx:for="{{schedules}}" wx:key="id">
+  <view class="section-title">设置阈值</view>
+  <view class="threshold-card card">
+    <view class="threshold-row">
       <view>
-        <view class="schedule-time">{{item.time}}</view>
-        <view class="schedule-desc">{{item.portions}} 份 · {{item.enabled ? '已启用' : '已暂停'}}</view>
+        <view class="threshold-title">低粮阈值</view>
+        <view class="threshold-desc">猫粮余量低于该值时告警</view>
       </view>
-      <switch checked="{{item.enabled}}" disabled />
+      <view class="threshold-input-wrap">
+        <input
+          class="threshold-input"
+          type="digit"
+          value="{{thresholdForm.lowFoodMax}}"
+          bindinput="onLowFoodChange"
+        />
+        <text class="threshold-unit">g</text>
+      </view>
+    </view>
+
+    <view class="threshold-row">
+      <view>
+        <view class="threshold-title">高温阈值</view>
+        <view class="threshold-desc">温度高于该值时告警</view>
+      </view>
+      <view class="threshold-input-wrap">
+        <input
+          class="threshold-input"
+          type="digit"
+          value="{{thresholdForm.tempHighMin}}"
+          bindinput="onTempHighChange"
+        />
+        <text class="threshold-unit">°C</text>
+      </view>
+    </view>
+
+    <view class="threshold-actions">
+      <button
+        class="primary-button threshold-button"
+        loading="{{thresholdSaving}}"
+        disabled="{{thresholdSaving}}"
+        bindtap="saveThresholds"
+      >保存阈值</button>
+      <button
+        class="ghost-button threshold-button"
+        loading="{{thresholdSaving}}"
+        disabled="{{thresholdSaving}}"
+        bindtap="resetThresholdSettings"
+      >重置</button>
     </view>
   </view>
 </view>

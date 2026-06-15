@@ -1,4 +1,4 @@
-const { BASE_URL, get, post } = require("./request.js");
+const { BASE_URL, CAPTURE_URL, get, post, put, delete: del } = require("./request.js");
 
 const WS_URL = BASE_URL.replace(/^http/, "ws");
 const LOW_FOOD_THRESHOLD = 10;
@@ -16,6 +16,23 @@ function scheduleTime(item = {}) {
   return `${padTime(item.hour || 0)}:${padTime(item.minute || 0)}`;
 }
 
+function normalizeFoodWeight(value) {
+  const weight = Number(value);
+  return Number.isNaN(weight) ? value : weight;
+}
+
+function normalizeFeederStatus(value, fallback = "OFF") {
+  if (value === true || value === 1 || value === "1" || value === "ON") {
+    return "ON";
+  }
+
+  if (value === false || value === 0 || value === "0" || value === "OFF") {
+    return "OFF";
+  }
+
+  return fallback;
+}
+
 function durationToPortions(duration) {
   const seconds = Number(duration) || PORTION_SECONDS;
   return Math.max(1, Math.round(seconds / PORTION_SECONDS));
@@ -25,7 +42,7 @@ function normalizeStatus(data = {}, fallback = {}) {
   return {
     temperature: data.temperature !== undefined ? data.temperature : fallback.temperature,
     humidity: data.humidity !== undefined ? data.humidity : fallback.humidity,
-    foodWeight: data.food_weight !== undefined ? data.food_weight : (
+    foodWeight: data.food_weight !== undefined ? normalizeFoodWeight(data.food_weight) : (
       data.weight !== undefined ? data.weight : fallback.foodWeight
     ),
     lowFoodThreshold: fallback.lowFoodThreshold || LOW_FOOD_THRESHOLD,
@@ -34,7 +51,7 @@ function normalizeStatus(data = {}, fallback = {}) {
     deviceOnline: data.online !== undefined ? data.online : (
       fallback.deviceOnline !== undefined ? fallback.deviceOnline : true
     ),
-    feederStatus: data.feeder_status || fallback.feederStatus || "OFF"
+    feederStatus: normalizeFeederStatus(data.feeder_status, fallback.feederStatus || "OFF")
   };
 }
 
@@ -52,7 +69,7 @@ function normalizeHistory(data = {}) {
   const times = data.time || [];
 
   return times.map((time, index) => ({
-    time,
+    time: typeof time === "string" && time.length >= 16 ? time.slice(11, 16) : time,
     temperature: data.temperature ? data.temperature[index] : 0,
     humidity: data.humidity ? data.humidity[index] : 0,
     foodWeight: data.weight ? data.weight[index] : 0,
@@ -65,7 +82,7 @@ function feedTypeLabel(type) {
     return "手动喂食";
   }
 
-  if (type === "schedule") {
+  if (type === "schedule" || type === "scheduled") {
     return "定时喂食";
   }
 
@@ -92,12 +109,41 @@ function getSensorHistory(params = {}) {
   return get("/api/sensor/history", params);
 }
 
+function getSensorHistoryByDate(date) {
+  return get("/api/sensor/history/date", { date });
+}
+
+function getSensorHistoryByRange(startDate, endDate) {
+  return get("/api/sensor/history/range", {
+    start_date: startDate,
+    end_date: endDate
+  });
+}
+
 function manualFeed(duration) {
   return post("/api/feed/manual", { duration });
 }
 
 function getFeedSchedules() {
   return get("/api/feed/schedules");
+}
+
+function createFeedSchedule({ hour, minute, portions }) {
+  return post("/api/feed/schedules", {
+    hour: Number(hour),
+    minute: Number(minute),
+    portions: Number(portions)
+  });
+}
+
+function updateFeedSchedule(id, enabled) {
+  return put(`/api/feed/schedules/${id}`, {
+    enabled: enabled ? 1 : 0
+  });
+}
+
+function deleteFeedSchedule(id) {
+  return del(`/api/feed/schedules/${id}`);
 }
 
 function getFeedRecords(params = {}) {
@@ -108,8 +154,36 @@ function getAlerts() {
   return get("/api/alerts");
 }
 
+function getLatestScreenshot() {
+  return get("/api/screenshot/latest");
+}
+
+function getScreenshotList(params = {}) {
+  return get("/api/screenshot/list", params);
+}
+
+function detectCamera() {
+  return post("/api/capture", {}, { baseUrl: CAPTURE_URL });
+}
+
 function sendCommand(command) {
   return post("/api/command", { command });
+}
+
+function getThresholds() {
+  return get("/api/thresholds");
+}
+
+function updateLowFoodThreshold(maxValue) {
+  return put("/api/thresholds/LOW_FOOD", { max_value: Number(maxValue) });
+}
+
+function updateTempHighThreshold(minValue) {
+  return put("/api/thresholds/TEMP_HIGH", { min_value: Number(minValue) });
+}
+
+function resetThresholds() {
+  return post("/api/thresholds/reset", {});
 }
 
 function connectRealtimeSocket(onMessage) {
@@ -137,10 +211,22 @@ module.exports = {
   getDeviceStatus,
   getRealtimeData,
   getSensorHistory,
+  getSensorHistoryByDate,
+  getSensorHistoryByRange,
   manualFeed,
   getFeedSchedules,
+  createFeedSchedule,
+  updateFeedSchedule,
+  deleteFeedSchedule,
   getFeedRecords,
   getAlerts,
+  getLatestScreenshot,
+  getScreenshotList,
+  detectCamera,
   sendCommand,
+  getThresholds,
+  updateLowFoodThreshold,
+  updateTempHighThreshold,
+  resetThresholds,
   connectRealtimeSocket
 };

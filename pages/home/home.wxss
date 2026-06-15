@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 22rpx;
   min-height: 280rpx;
   padding: 36rpx;
   border-radius: 20rpx;
@@ -9,15 +10,12 @@
   box-sizing: border-box;
 }
 
-.eyebrow {
-  color: #1f8a70;
-  font-size: 22rpx;
-  font-weight: 700;
+.hero-copy {
+  flex: 1;
+  min-width: 0;
 }
 
 .title {
-  width: 410rpx;
-  margin-top: 12rpx;
   font-size: 42rpx;
   line-height: 1.2;
   font-weight: 800;
@@ -29,45 +27,41 @@
   font-size: 24rpx;
 }
 
-.cat-face {
-  position: relative;
+.feeder-toggle {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 148rpx;
+  width: 168rpx;
   height: 132rpx;
-  border-radius: 44rpx;
-  background: #f0b35c;
-  color: #34251a;
-  font-size: 26rpx;
+  margin: 0;
+  padding: 0;
+  border-radius: 18rpx;
+  background: #fffaf4;
+  color: #4b4037;
+  line-height: 1.2;
+  box-shadow: 0 8rpx 20rpx rgba(58, 42, 26, 0.08);
   flex-shrink: 0;
 }
 
-.ear {
-  position: absolute;
-  top: -22rpx;
-  width: 52rpx;
-  height: 52rpx;
-  background: #f0b35c;
-  transform: rotate(45deg);
+.feeder-toggle::after {
+  border: 0;
 }
 
-.ear.left {
-  left: 18rpx;
+.feeder-toggle.on {
+  background: #1f8a70;
+  color: #ffffff;
 }
 
-.ear.right {
-  right: 18rpx;
+.toggle-label {
+  font-size: 23rpx;
+  font-weight: 700;
 }
 
-.eyes {
-  letter-spacing: 18rpx;
-}
-
-.mouth {
-  margin-top: 8rpx;
+.toggle-state {
+  margin-top: 10rpx;
   font-size: 34rpx;
+  font-weight: 800;
 }
 
 .quick-grid {
@@ -117,27 +111,85 @@
   line-height: 1.5;
 }
 
+.notice-time {
+  margin-top: 10rpx;
+  color: #9a8e82;
+  font-size: 22rpx;
+}
+
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 18rpx;
 }
 
-.schedule {
+.threshold-card {
+  padding: 8rpx 26rpx 26rpx;
+}
+
+.threshold-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18rpx;
-  padding: 24rpx 28rpx;
+  gap: 18rpx;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #eadfd4;
 }
 
-.schedule-time {
-  font-size: 34rpx;
+.threshold-title {
+  color: #2c2925;
+  font-size: 30rpx;
   font-weight: 800;
 }
 
-.schedule-desc {
+.threshold-desc {
   margin-top: 6rpx;
   color: #766d63;
   font-size: 24rpx;
+}
+
+.threshold-input-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 170rpx;
+  height: 72rpx;
+  padding: 0 18rpx;
+  border-radius: 12rpx;
+  background: #f7efe7;
+  box-sizing: border-box;
+}
+
+.threshold-input {
+  width: 96rpx;
+  color: #1f8a70;
+  font-size: 30rpx;
+  font-weight: 800;
+  text-align: right;
+}
+
+.threshold-unit {
+  margin-left: 8rpx;
+  color: #766d63;
+  font-size: 24rpx;
+}
+
+.threshold-actions {
+  display: flex;
+  gap: 18rpx;
+  width: 100%;
+  margin-top: 24rpx;
+  box-sizing: border-box;
+}
+
+.threshold-button {
+  width: 100%;
+  min-width: 0;
+  height: 76rpx;
+  margin: 0;
+  padding: 0;
+  border-radius: 38rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  line-height: 76rpx;
 }

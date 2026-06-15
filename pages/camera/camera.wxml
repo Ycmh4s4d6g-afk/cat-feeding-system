@@ -1,19 +1,19 @@
 <view class="page">
   <view class="camera-card">
-    <view class="lens">
-      <view class="cat-silhouette">
-        <view class="cat-ear cat-ear-left"></view>
-        <view class="cat-ear cat-ear-right"></view>
-        <view class="cat-eye-row">● ●</view>
-        <view class="cat-nose">▽</view>
-      </view>
+    <image wx:if="{{latest && latest.displayUrl}}" class="latest-image tappable-image" src="{{latest.displayUrl}}" mode="aspectFill" bindtap="previewLatest" />
+    <view wx:else class="empty-preview">
+      <view class="empty-title">{{loading ? '正在加载截图' : '暂无截图'}}</view>
+      <view class="empty-text">等待后端截图接口返回最新画面</view>
     </view>
-    <view class="camera-status">PIR 红外检测 · YOLOv5-Nano 猫咪识别</view>
+    <view class="camera-status">
+      <text wx:if="{{latest && latest.time}}">最新截图 {{latest.time}}</text>
+      <text wx:else>PIR 红外检测 · 摄像头截图</text>
+    </view>
   </view>
 
   <view class="actions">
-    <button class="primary-button" bindtap="takePhoto">远程拍照</button>
-    <button class="ghost-button" bindtap="simulateDetect">模拟猫咪经过</button>
+    <button class="ghost-button" bindtap="refreshScreenshots" loading="{{loading}}" disabled="{{loading || takingPhoto}}">刷新截图</button>
+    <button class="primary-button" bindtap="takePhotoNow" loading="{{takingPhoto}}" disabled="{{takingPhoto}}">立即拍照</button>
   </view>
 
   <view class="section-title">识别规则</view>
@@ -24,24 +24,26 @@
     </view>
     <view class="rule-item">
       <text class="rule-step">2</text>
-      <text>摄像头自动抓拍现场画面</text>
+      <text>摄像头自动保存现场截图</text>
     </view>
     <view class="rule-item">
       <text class="rule-step">3</text>
-      <text>识别结果为 cat 且置信度高于 0.6 时推送提醒</text>
+      <text>截图列表按 eating 类型展示进食相关画面</text>
     </view>
   </view>
 
-  <view class="section-title">抓拍记录</view>
+  <view class="section-title">截图记录</view>
   <view class="capture-list">
     <view class="capture card" wx:for="{{captures}}" wx:key="id">
-      <view class="thumb">
-        <view class="mini-cat">cat</view>
-      </view>
+      <image wx:if="{{item.displayUrl}}" class="thumb tappable-image" src="{{item.displayUrl}}" mode="aspectFill" data-url="{{item.displayUrl}}" bindtap="previewCapture" />
+      <view wx:else class="thumb placeholder">加载中</view>
       <view class="capture-info">
-        <view class="capture-time">{{item.time}}</view>
-        <view class="capture-meta">{{item.type}} · 置信度 {{item.confidence}}</view>
+        <view class="capture-time">{{item.time || '--'}}</view>
+        <view class="capture-meta">{{item.type}}{{item.confidence !== '' ? ' · 置信度 ' + item.confidence : ''}}</view>
       </view>
+    </view>
+    <view class="empty-list card" wx:if="{{!captures.length}}">
+      {{loading ? '正在加载截图记录' : '暂无截图记录'}}
     </view>
   </view>
 </view>

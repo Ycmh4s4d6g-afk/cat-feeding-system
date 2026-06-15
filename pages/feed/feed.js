@@ -1,25 +1,33 @@
 const { getDeviceSnapshot } = require("../../utils/mock-device");
 const {
-  PORTION_SECONDS,
+  createFeedSchedule,
+  deleteFeedSchedule,
   getDeviceStatus,
+  getFeedRecords,
   getFeedSchedules,
-  manualFeed,
+  normalizeRecord,
   normalizeSchedule,
-  normalizeStatus
+  normalizeStatus,
+  updateFeedSchedule
 } = require("../../utils/api.js");
 
 Page({
   data: {
     status: {},
     schedules: [],
-    manualPortions: 1,
+    records: [],
     newTime: "20:00",
-    newPortions: 2
+    newPortions: 2,
+    scheduleSaving: false,
+    updatingScheduleId: null
   },
 
   onLoad() {
     const { status, schedules } = getDeviceSnapshot();
-    this.setData({ status, schedules: schedules.map((item) => ({ ...item })) });
+    this.setData({
+      status,
+      schedules: schedules.map((item) => ({ ...item }))
+    });
     this.loadFeedData();
   },
 
@@ -38,8 +46,12 @@ Page({
       getFeedSchedules().catch((err) => {
         console.error("feed schedules failed:", err);
         return null;
+      }),
+      getFeedRecords({ limit: 50 }).catch((err) => {
+        console.error("feed records failed:", err);
+        return null;
       })
-    ]).then(([statusData, schedulesData]) => {
+    ]).then(([statusData, schedulesData, recordsData]) => {
       const nextData = {};
 
       if (statusData) {
@@ -50,16 +62,12 @@ Page({
         nextData.schedules = schedulesData.map(normalizeSchedule);
       }
 
+      if (Array.isArray(recordsData)) {
+        nextData.records = recordsData.map(normalizeRecord);
+      }
+
       this.setData(nextData);
     });
-  },
-
-  minusPortion() {
-    this.setData({ manualPortions: Math.max(1, this.data.manualPortions - 1) });
-  },
-
-  plusPortion() {
-    this.setData({ manualPortions: Math.min(6, this.data.manualPortions + 1) });
   },
 
   minusSchedulePortion() {
@@ -74,40 +82,83 @@ Page({
     this.setData({ newTime: event.detail.value });
   },
 
-  sendManualFeed() {
-    const duration = this.data.manualPortions * PORTION_SECONDS;
+  addSchedule() {
+    if (this.data.scheduleSaving) {
+      return;
+    }
 
-    manualFeed(duration)
+    const [hour, minute] = this.data.newTime.split(":").map(Number);
+
+    this.setData({ scheduleSaving: true });
+    createFeedSchedule({
+      hour,
+      minute,
+      portions: this.data.newPortions
+    })
       .then(() => {
-        wx.showToast({
-          title: "已发送",
-          icon: "success"
-        });
+        wx.showToast({ title: "计划已添加", icon: "success" });
         this.loadFeedData();
       })
       .catch((err) => {
-        console.error("manual feed failed:", err);
-        wx.showToast({ title: "发送失败", icon: "none" });
+        console.error("add schedule failed:", err);
+        wx.showToast({ title: "添加失败", icon: "none" });
+      })
+      .finally(() => {
+        this.setData({ scheduleSaving: false });
       });
   },
 
-  addSchedule() {
-    const next = {
-      id: Date.now(),
-      time: this.data.newTime,
-      portions: this.data.newPortions,
-      durationSeconds: this.data.newPortions * PORTION_SECONDS,
-      enabled: true
-    };
-    this.setData({ schedules: [...this.data.schedules, next] });
-    wx.showToast({ title: "计划已添加", icon: "success" });
+  toggleSchedule(event) {
+    const id = Number(event.currentTarget.dataset.id);
+    const enabled = event.detail.value;
+
+    this.setData({ updatingScheduleId: id });
+    updateFeedSchedule(id, enabled)
+      .then(() => {
+        wx.showToast({ title: enabled ? "已启用" : "已禁用", icon: "success" });
+        this.loadFeedData();
+      })
+      .catch((err) => {
+        console.error("toggle schedule failed:", err);
+        wx.showToast({ title: "更新失败", icon: "none" });
+        this.loadFeedData();
+      })
+      .finally(() => {
+        this.setData({ updatingScheduleId: null });
+      });
   },
 
-  toggleSchedule(event) {
-    const id = event.currentTarget.dataset.id;
-    const schedules = this.data.schedules.map((item) => (
-      item.id === id ? { ...item, enabled: event.detail.value } : item
-    ));
-    this.setData({ schedules });
+  deleteSchedule(event) {
+    const id = Number(event.currentTarget.dataset.id);
+
+    if (this.data.updatingScheduleId === id) {
+      return;
+    }
+
+    wx.showModal({
+      title: "删除计划",
+      content: "确定删除这条喂食计划吗？",
+      confirmText: "删除",
+      confirmColor: "#cf5c36",
+      success: (res) => {
+        if (!res.confirm) {
+          return;
+        }
+
+        this.setData({ updatingScheduleId: id });
+        deleteFeedSchedule(id)
+          .then(() => {
+            wx.showToast({ title: "已删除", icon: "success" });
+            this.loadFeedData();
+          })
+          .catch((err) => {
+            console.error("delete schedule failed:", err);
+            wx.showToast({ title: "删除失败", icon: "none" });
+          })
+          .finally(() => {
+            this.setData({ updatingScheduleId: null });
+          });
+      }
+    });
   }
 });

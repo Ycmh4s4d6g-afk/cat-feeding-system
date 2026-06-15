@@ -1,5 +1,6 @@
 const DEFAULT_TIMEOUT = 30000;
-const BASE_URL = "http://10.100.153.147:5000";
+const BASE_URL = "http://10.100.215.31:5000";
+const CAPTURE_URL = "http://10.100.215.31:5001";
 
 const config = {
   baseUrl: BASE_URL,
@@ -140,6 +141,7 @@ function uploadFile(options = {}) {
 
 module.exports = {
   BASE_URL,
+  CAPTURE_URL,
   setRequestConfig,
   request,
   get,

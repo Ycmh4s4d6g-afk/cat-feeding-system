@@ -7,19 +7,6 @@
     <view class="summary-rule">低于 {{status.lowFoodThreshold}}g 自动提醒</view>
   </view>
 
-  <view class="section-title">手动喂食</view>
-  <view class="portion-panel card">
-    <view class="portion-row">
-      <button class="stepper" bindtap="minusPortion">-</button>
-      <view class="portion-count">
-        <text>{{manualPortions}}</text>
-        <text class="unit">份</text>
-      </view>
-      <button class="stepper" bindtap="plusPortion">+</button>
-    </view>
-    <button class="primary-button feed-button" bindtap="sendManualFeed">发送喂食指令</button>
-  </view>
-
   <view class="section-title">定时计划</view>
   <view class="form card">
     <view class="form-row">
@@ -36,16 +23,43 @@
         <button bindtap="plusSchedulePortion">+</button>
       </view>
     </view>
-    <button class="ghost-button" bindtap="addSchedule">添加计划</button>
+    <button
+      class="ghost-button"
+      loading="{{scheduleSaving}}"
+      disabled="{{scheduleSaving}}"
+      bindtap="addSchedule"
+    >添加计划</button>
   </view>
 
   <view class="schedule-list">
     <view class="schedule card" wx:for="{{schedules}}" wx:key="id">
-      <view>
+      <view class="schedule-main">
         <view class="schedule-time">{{item.time}}</view>
-        <view class="schedule-desc">出粮 {{item.portions}} 份 · 防重复执行已开启</view>
+        <view class="schedule-desc">出粮 {{item.portions}} 份 · {{item.durationSeconds}} 秒</view>
       </view>
-      <switch checked="{{item.enabled}}" data-id="{{item.id}}" bindchange="toggleSchedule" />
+      <view class="schedule-actions">
+        <switch
+          checked="{{item.enabled}}"
+          disabled="{{updatingScheduleId === item.id}}"
+          data-id="{{item.id}}"
+          bindchange="toggleSchedule"
+        />
+        <view
+          class="delete-button {{updatingScheduleId === item.id ? 'is-disabled' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="deleteSchedule"
+        >删除</view>
+      </view>
     </view>
+    <view class="empty-card card" wx:if="{{!schedules.length}}">暂无喂食计划</view>
+  </view>
+
+  <view class="section-title">喂食记录</view>
+  <view class="records card">
+    <view class="record" wx:for="{{records}}" wx:key="id">
+      <text>{{item.time}}</text>
+      <text>{{item.text}}</text>
+    </view>
+    <view class="empty-record" wx:if="{{!records.length}}">暂无喂食记录</view>
   </view>
 </view>

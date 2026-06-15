@@ -1,46 +1,71 @@
 <view class="page">
-  <view class="date-card card">
-    <text>日期时间</text>
-    <picker mode="date" value="{{selectedDate}}" bindchange="onDateChange">
-      <view>{{selectedDate}}</view>
-    </picker>
+  <view class="filter-card card">
+    <view class="filter-grid">
+      <view class="filter-field">
+        <text class="filter-label">日期</text>
+        <picker mode="date" value="{{selectedDate}}" bindchange="onDateChange">
+          <view class="filter-value">{{selectedDate}}</view>
+        </picker>
+      </view>
+      <view class="filter-field">
+        <text class="filter-label">开始时间</text>
+        <picker mode="time" value="{{startTime}}" bindchange="onStartTimeChange">
+          <view class="filter-value">{{startTime}}</view>
+        </picker>
+      </view>
+      <view class="filter-field">
+        <text class="filter-label">结束时间</text>
+        <picker mode="time" value="{{endTime}}" bindchange="onEndTimeChange">
+          <view class="filter-value">{{endTime}}</view>
+        </picker>
+      </view>
+    </view>
+    <view class="filter-actions">
+      <button class="primary-button filter-button" bindtap="applyTimeFilter">查询</button>
+      <button class="ghost-button filter-button" bindtap="resetToLast24Hours">最近24小时</button>
+    </view>
   </view>
 
-  <view class="section-title">温湿度</view>
-  <view class="chart card">
-    <view class="chart-row" wx:for="{{trend}}" wx:key="time">
-      <view class="chart-time">{{item.time}}</view>
-      <view class="bar-wrap">
-        <view class="temp-bar" style="width: {{item.temperature * 3}}%;"></view>
+  <view class="section-title">温湿度趋势</view>
+  <view class="weather-card card">
+    <view class="weather-summary">
+      <view class="summary-item">
+        <text class="summary-label">当前温度</text>
+        <text class="summary-value temp-text">{{weatherStats.latestTemperature}}°C</text>
       </view>
-      <view class="chart-value">{{item.temperature}}℃</view>
+      <view class="summary-item">
+        <text class="summary-label">当前湿度</text>
+        <text class="summary-value humidity-text">{{weatherStats.latestHumidity}}%</text>
+      </view>
     </view>
+    <canvas id="weatherChart" canvas-id="weatherChart" class="line-canvas"></canvas>
     <view class="legend">
-      <text class="temp-dot"></text>
-      <text>温度趋势</text>
+      <view class="legend-item">
+        <text class="temp-dot"></text>
+        <text>温度</text>
+      </view>
+      <view class="legend-item">
+        <text class="humidity-dot"></text>
+        <text>湿度</text>
+      </view>
     </view>
   </view>
 
   <view class="section-title">余量曲线</view>
-  <view class="chart card">
-    <view class="chart-row" wx:for="{{trend}}" wx:key="time">
-      <view class="chart-time">{{item.time}}</view>
-      <view class="bar-wrap">
-        <view class="food-bar" style="width: {{item.foodWeight}}%;"></view>
+  <view class="food-card card">
+    <view class="food-summary">
+      <view class="summary-item">
+        <text class="summary-label">当前余量</text>
+        <text class="summary-value food-text">{{foodStats.latestFoodWeight}}g</text>
       </view>
-      <view class="chart-value">{{item.foodWeight}}g</view>
     </view>
+    <canvas id="foodChart" canvas-id="foodChart" class="line-canvas"></canvas>
     <view class="legend">
-      <text class="food-dot"></text>
-      <text>猫粮余量</text>
+      <view class="legend-item">
+        <text class="food-dot"></text>
+        <text>猫粮余量</text>
+      </view>
     </view>
   </view>
 
-  <view class="section-title">历史记录</view>
-  <view class="records card">
-    <view class="record" wx:for="{{records}}" wx:key="time">
-      <text>{{item.time}}</text>
-      <text>{{item.text}}</text>
-    </view>
-  </view>
 </view>
